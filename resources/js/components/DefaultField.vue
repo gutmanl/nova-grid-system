@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { HandlesValidationErrors, Errors } from "laravel-nova";
+//import { HandlesValidationErrors, Errors } from "laravel-nova";
+import { HandlesValidationErrors } from '@/mixins';
 
 export default {
   mixins: [HandlesValidationErrors],

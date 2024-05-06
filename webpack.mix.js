@@ -10,9 +10,9 @@ mix
   .nova("codenco-dev/nova-grid-system");
 
 mix.alias({
-  "laravel-nova": path.join(
-    __dirname,
-    "vendor/laravel/nova/resources/js/mixins/packages.js"
-  ),
+  //"laravel-nova": path.join(
+  //  __dirname,
+  //  "vendor/laravel/nova/resources/js/mixins/packages.js"
+  //),
   '@': path.join(__dirname, 'resources/js/'),
 });
