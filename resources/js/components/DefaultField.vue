@@ -50,7 +50,7 @@ export default {
 
   mounted() {
     //We must do it this way as the $el property only becomes usable on mount
-    this.checkIfActionField();
+    this.performChecks();
 
     if (!this.hasSize) {
       
@@ -64,12 +64,23 @@ export default {
       this.$parent?.$parent?.$el?.classList?.add("flex-wrap");
       this.$parent?.$parent?.$el?.classList?.add("flex");
 
-      if(this.isActionField) {
-        this.$el.parentElement.parentElement.classList.add("flex");
-        this.$el.parentElement.parentElement.classList.add("flex-wrap");
-        this.$el.parentElement.parentElement.classList.add("flex-dom");
+      if(this.isInDependencyContainer) {
+        let dependencyWrapperDiv = this.$el.closest('[sync-endpoint]');
+        let dependencyDiv = this.$el.parentElement;
+        dependencyWrapperDiv.classList.add("flex");
+        dependencyWrapperDiv.classList.add("flex-wrap");
+        dependencyWrapperDiv.classList.add("flex-dom");
 
-        this.$el.parentElement.classList.add(...this.internalElementSize.split(" "));
+        dependencyDiv.classList.add(...this.internalElementSize.split(" "));
+      }
+      else if(this.isActionField) {
+        let actionDiv = this.$el.closest('.action');
+        let actionWrapperDiv = actionDiv.parentElement;
+        actionWrapperDiv.classList.add("flex");
+        actionWrapperDiv.classList.add("flex-wrap");
+        actionWrapperDiv.classList.add("flex-dom");
+
+        actionDiv.classList.add(...this.internalElementSize.split(" "));
       }
     }
 
@@ -91,18 +102,20 @@ export default {
   },
 
   methods: {
-    /**
-     * LG: Check if we are on the action fields page
-     */
-    checkIfActionField() {
-      if(this.$el?.parentElement?.classList.contains("action")) {
+    performChecks() {
+      if(this.$el.closest('.action')) {
         this.isActionField = true;
+      }
+
+      if(this.$el.closest('[sync-endpoint]')) {
+        this.isInDependencyContainer = true;
       }
     }
   },
   data() {
     return {
-      isActionField: false
+      isActionField: false,
+      isInDependencyContainer: false
     }
   },
   computed: {
