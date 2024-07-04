@@ -1,7 +1,7 @@
 <template>
   <div :class="elementSize">
     <field-wrapper :stacked="field.stacked" v-if="field.visible">
-      <div class="px-8" :class="field.stacked ? 'pt-6 w-full' : 'py-6 w-1/5'">
+      <div class="px-8" :class="field.stacked ? 'pt-6 w-full' : 'py-6 w-2/5'">
         <slot>
           <form-label
             :label-for="field.attribute"
@@ -49,6 +49,9 @@ export default {
   },
 
   mounted() {
+    //We must do it this way as the $el property only becomes usable on mount
+    this.checkIfActionField();
+
     if (!this.hasSize) {
       
       this.$el.parentElement.classList.add("w-full");
@@ -56,11 +59,18 @@ export default {
 
 
     // If field has a size, this allows to use flex on card
-    if (this.hasSize & this.$parent.$parent.$parent.selectedTab === undefined) {
-      this.$parent.$parent.$el.classList.add("flex-dom");
-      this.$parent.$parent.$el.classList.add("flex-wrap");
-      this.$parent.$parent.$el.classList.add("flex");
+    if (this.hasSize && this.$parent?.$parent?.$parent?.selectedTab === undefined) {
+      this.$parent?.$parent?.$el?.classList?.add("flex-dom");
+      this.$parent?.$parent?.$el?.classList?.add("flex-wrap");
+      this.$parent?.$parent?.$el?.classList?.add("flex");
 
+      if(this.isActionField) {
+        this.$el.parentElement.parentElement.classList.add("flex");
+        this.$el.parentElement.parentElement.classList.add("flex-wrap");
+        this.$el.parentElement.parentElement.classList.add("flex-dom");
+
+        this.$el.parentElement.classList.add(...this.internalElementSize.split(" "));
+      }
     }
 
     //Use for eminiarts/nova-tabs package
@@ -80,6 +90,21 @@ export default {
    
   },
 
+  methods: {
+    /**
+     * LG: Check if we are on the action fields page
+     */
+    checkIfActionField() {
+      if(this.$el?.parentElement?.classList.contains("action")) {
+        this.isActionField = true;
+      }
+    }
+  },
+  data() {
+    return {
+      isActionField: false
+    }
+  },
   computed: {
     /**
      * Return the label that should be used for the field.
@@ -97,19 +122,17 @@ export default {
      * Return the classes that should be used for the field content.
      */
     fieldClasses() {
-      return this.fullWidthContent
-        ? this.field.stacked
-          ? "w-full"
-          : "w-4/5"
-        : this.hasSize
-        ? "w-full"
-        : "w-1/2";
+      return this.field.stacked ? 'w-full' : ( this.fullWidthContent ? 'w-3/5' : (this.hasSize ? 'w-3/5' : 'w-1/2'));
     },
 
     /**
      * Return the size that should be used for the field container.
      */
     elementSize() {
+      return this.isActionField ? '' : this.internalElementSize
+    },
+
+    internalElementSize() {
       return this.field.size || "w-full";
     },
 
